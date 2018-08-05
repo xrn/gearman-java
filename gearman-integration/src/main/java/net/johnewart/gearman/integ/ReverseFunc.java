@@ -4,6 +4,8 @@ import net.johnewart.gearman.common.Job;
 import net.johnewart.gearman.common.events.WorkEvent;
 import net.johnewart.gearman.common.interfaces.GearmanFunction;
 import net.johnewart.gearman.common.interfaces.GearmanWorker;
+import net.johnewart.gearman.common.packets.request.WorkCompleteRequest;
+import net.johnewart.gearman.common.packets.request.WorkDataRequest;
 import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +16,7 @@ public class ReverseFunc implements GearmanFunction {
     private final Logger LOG = LoggerFactory.getLogger(ReverseFunc.class);
 
     @Override
-    public byte[] process(WorkEvent workEvent) {
+    public WorkDataRequest process(WorkEvent workEvent) {
         final Job job = workEvent.job;
         final GearmanWorker worker = workEvent.worker;
 
@@ -28,6 +30,6 @@ public class ReverseFunc implements GearmanFunction {
                 LOG.error("Unable to send status: ", e);
             }
         }
-        return data;
+        return new WorkCompleteRequest(job.getJobHandle(), data);
     }
 }

@@ -3,6 +3,8 @@ package net.johnewart.gearman.example;
 import net.johnewart.gearman.client.NetworkGearmanWorkerPool;
 import net.johnewart.gearman.common.events.WorkEvent;
 import net.johnewart.gearman.common.interfaces.GearmanFunction;
+import net.johnewart.gearman.common.packets.request.WorkCompleteRequest;
+import net.johnewart.gearman.common.packets.request.WorkDataRequest;
 import net.johnewart.gearman.net.Connection;
 import org.apache.commons.lang3.ArrayUtils;
 import net.johnewart.gearman.common.Job;
@@ -15,13 +17,13 @@ public class WorkerPoolDemo {
     static class ReverseFunction implements GearmanFunction
     {
         @Override
-        public byte[] process(WorkEvent workEvent) {
+        public WorkDataRequest process(WorkEvent workEvent) {
             Job job = workEvent.job;
             byte[] data = job.getData();
             String function = job.getFunctionName();
             LOG.debug("Got data for function " + function);
             ArrayUtils.reverse(data);
-            return data;
+            return new WorkCompleteRequest(job.getJobHandle(), data);
         }
     }
 

@@ -10,6 +10,8 @@ import net.johnewart.gearman.common.events.WorkEvent;
 import net.johnewart.gearman.common.interfaces.GearmanClient;
 import net.johnewart.gearman.common.interfaces.GearmanFunction;
 import net.johnewart.gearman.common.interfaces.GearmanWorker;
+import net.johnewart.gearman.common.packets.request.WorkCompleteRequest;
+import net.johnewart.gearman.common.packets.request.WorkDataRequest;
 import net.johnewart.gearman.engine.queue.factories.MemoryJobQueueFactory;
 import net.johnewart.gearman.exceptions.JobSubmissionException;
 import net.johnewart.gearman.exceptions.WorkException;
@@ -141,7 +143,7 @@ public class BasicServerIntegrationTest {
         }
 
         @Override
-        public byte[] process(WorkEvent workEvent) {
+        public WorkDataRequest process(WorkEvent workEvent) {
             Job job = workEvent.job;
             GearmanWorker worker = workEvent.worker;
 
@@ -156,7 +158,8 @@ public class BasicServerIntegrationTest {
                 }
             }
             ArrayUtils.reverse(data);
-            return data;
+            return new WorkCompleteRequest(job.getJobHandle(), data);
+
         }
     }
 

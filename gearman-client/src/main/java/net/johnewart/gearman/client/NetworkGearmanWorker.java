@@ -68,7 +68,7 @@ public class NetworkGearmanWorker implements GearmanWorker, Runnable {
                 try {
                     c.sendPacket(new GrabJob());
                     Packet p = c.getNextPacket();
-                    byte[] result;
+//                    byte[] result;
 
                     switch(p.getType()) {
                         case JOB_ASSIGN:
@@ -96,8 +96,9 @@ public class NetworkGearmanWorker implements GearmanWorker, Runnable {
                     if (nextJob != null) {
                         jobConnectionMap.put(nextJob, c);
                         WorkEvent workEvent = new WorkEvent(nextJob, this);
-                        result = callbacks.get(nextJob.getFunctionName()).process(workEvent);
-                        c.sendPacket(new WorkCompleteRequest(nextJob.getJobHandle(), result));
+                        Packet packet = callbacks.get(nextJob.getFunctionName()).process(workEvent);
+                        // new WorkCompleteRequest(nextJob.getJobHandle(), result)
+                        c.sendPacket(packet);
                     }
 
                 } catch (IOException ioe) {

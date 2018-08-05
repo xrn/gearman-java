@@ -5,6 +5,8 @@ import net.johnewart.gearman.common.events.WorkEvent;
 import net.johnewart.gearman.common.interfaces.GearmanFunction;
 import net.johnewart.gearman.common.interfaces.EngineWorker;
 import net.johnewart.gearman.common.interfaces.GearmanWorker;
+import net.johnewart.gearman.common.packets.Packet;
+import net.johnewart.gearman.common.packets.request.WorkDataRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,8 +46,8 @@ public class EmbeddedGearmanWorker implements EngineWorker, GearmanWorker, Runna
                 LOG.debug("Received work to do: " + nextJob.getJobHandle());
                 GearmanFunction function  = abilityMap.get(nextJob.getFunctionName());
                 WorkEvent workEvent = new WorkEvent(nextJob, this);
-                final byte[] results = function.process(workEvent);
-                server.completeWork(nextJob, results);
+                final WorkDataRequest workDataRequest = function.process(workEvent);
+                server.completeWork(nextJob, workDataRequest.data);
             }
         } while (nextJob != null);
 

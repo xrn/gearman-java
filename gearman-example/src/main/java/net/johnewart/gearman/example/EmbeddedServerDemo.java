@@ -4,6 +4,8 @@ import net.johnewart.gearman.common.Job;
 import net.johnewart.gearman.common.events.WorkEvent;
 import net.johnewart.gearman.common.interfaces.GearmanClient;
 import net.johnewart.gearman.common.interfaces.GearmanFunction;
+import net.johnewart.gearman.common.packets.request.WorkCompleteRequest;
+import net.johnewart.gearman.common.packets.request.WorkDataRequest;
 import net.johnewart.gearman.embedded.EmbeddedGearmanClient;
 import net.johnewart.gearman.embedded.EmbeddedGearmanServer;
 import net.johnewart.gearman.embedded.EmbeddedGearmanWorker;
@@ -62,11 +64,12 @@ public class EmbeddedServerDemo {
 
     class TestFunction implements GearmanFunction {
         @Override
-        public byte[] process(WorkEvent workEvent) {
+        public WorkDataRequest process(WorkEvent workEvent) {
             Job job = workEvent.job;
-            byte[] datacopy = Arrays.copyOf(job.getData(), job.getData().length);
-            Arrays.sort(datacopy);
-            return datacopy;
+            byte[] data = Arrays.copyOf(job.getData(), job.getData().length);
+            Arrays.sort(data);
+            return new WorkCompleteRequest(job.getJobHandle(), data);
+
         }
     }
 
